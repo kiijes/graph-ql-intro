@@ -5,6 +5,8 @@
 ### [> 2.1 Skeeman kielioppi](#21)
 ### [> 2.2 Juuripoeraatiotyypit](#22)
 ### [> > 2.2.1 Query-tyyppi](#221)
+### [> > 2.2.2 Mutation-tyyppi](#222)
+## [3 Resolver](#3)
 
 <a id='1'></a>
 ## 1 Mikä ihmeen GraphQL?
@@ -54,11 +56,29 @@ Skalaarityyppejä voi määritellä myös itse, mutta siihen ei tässä työssä
 <a id='22'></a>
 ### 2.2 Juurioperaatiotyypit
 
-Skeema sisältää valmiiksi Query-, Mutation- ja Subscription-juurioperaatiotyypit, joidenka sisälle luodaan määritelmät mahdollisille kyselyille.
+GraphQL-skeema sisältää valmiiksi Query-, Mutation- ja Subscription-juurioperaatiotyypit, joidenka sisälle luodaan määritelmät mahdollisille kyselyille. Tässä oppimateriaalissa käsitellään vain Query- ja Mutation-tyyppejä.
 
 \- [GraphQL-spesifikaation juurityyppiosio](https://graphql.github.io/graphql-spec/draft/#sec-Root-Operation-Types)
 
 <a id='221'></a>
 #### 2.2.1 Query-tyyppi
 
-Query-tyypin sisälle on määriteltävä tietoa palauttavat kyselyt.
+Query-tyypin sisälle on määriteltävä tietoa palauttavat kyselyt. Jos haluaisimme määritellä kyselyn, joka palauttaa jonkun tietyn henkilön hänen ID:nsä perusteella, voisimme määritellä sen skeeman sisälle näin:
+
+```
+type Query {
+    henkilo(_id: String!): Henkilo
+}
+```
+
+`henkilo`-kysely ottaa vastaan parametrin _id, jonka tulee olla tyyppiä `String`. Resolveriin tehtävä toteutus voi nyt hyödyntää kyselylle annettua argumenttia.
+
+<a id='222'></a>
+#### 2.2.2 Mutation-tyyppi
+
+// TODO
+
+<a id='3'></a>
+## 3 Resolver
+
+// TODO
