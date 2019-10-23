@@ -1,5 +1,13 @@
 # GraphQL
-## Mikä ihmeen GraphQL?
+
+## [1 Mikä ihmeen GraphQL?](#1)
+## [2 GraphQL-skeema](#2)
+### [> 2.1 Skeeman kielioppi](#21)
+### [> 2.2 Juuripoeraatiotyypit](#22)
+### [> > 2.2.1 Query-tyyppi](#221)
+
+<a id='1'></a>
+## 1 Mikä ihmeen GraphQL?
 
 GraphQL on kyselykieli, jota voidaan käyttää palvelimella rajapinnan toteuttamiseen. Se sisältää myös ajonaikaisia toimintoja kyselyihin vastaamiseen palvelimella. Siinä missä RESTillä on monta endpointtia, riippuen mitä palvelimelta halutaan kutsua, GraphQL:llä niitä on vain yksi. Siinä mielessä se saattaa olla yksinkertaisempi asiakassovelluksen kehittäjän kannalta – kyselyillä on vain yksi osoite, ja mitä tietoa haetaan riippuu siitä, minkälaisen kyselyn kirjoitat. Kyselyn tyyli on kuin JSON-notaatio ilman lainausmerkkejä tai kaksoispisteitä; kirjoitat ikään kuin objektin ja kentät, joita siltä haluat. Palvelinpuolella kyselyiden toteutus tehdään GraphQL-skeeman ja nk. resolverin avulla.
 
@@ -7,13 +15,15 @@ GraphQL:ssä haettavaa tietoa siis määritellään kyselyillä eikä endpointil
 
 \- [GraphQL vs. REST](https://blog.apollographql.com/graphql-vs-rest-5d425123e34b)
 
-## GraphQL-skeema
+<a id='2'></a>
+## 2 GraphQL-skeema
 
 GraphQL-skeema on yksi GraphQL-rajapinnan olennaisimmista osista. Skeema määrittää sen, mitä tietoa rajapinnalta on haettavissa ja minkälaisia kyselyitä sillä voi tehdä. Näiden määritelmien pohjalta luodaan kyselyiden toteutus resolveriin. 
 
 \- [Oppimateriaalia skeemoihin ja tyyppeihin GraphQL:n sivulla](https://graphql.org/learn/schema/)
 
-### Skeeman kielioppi
+<a id='21'></a>
+### 2.1 Skeeman kielioppi
 
 GraphQL-skeemakieli muistuttaa syntaksiltaan JSONia ilman lainausmerkkejä tai pilkkuja. Tältä voisi näyttää Henkilö- ja Viesti-tyyppien määritelmät GraphQL-skeemassa:
 
@@ -41,12 +51,14 @@ type Viesti {
 
 Skalaarityyppejä voi määritellä myös itse, mutta siihen ei tässä työssä kiinnitetä huomiota.
 
-### Juurioperaatiotyypit
+<a id='22'></a>
+### 2.2 Juurioperaatiotyypit
 
 Skeema sisältää valmiiksi Query-, Mutation- ja Subscription-juurioperaatiotyypit, joidenka sisälle luodaan määritelmät mahdollisille kyselyille.
 
 \- [GraphQL-spesifikaation juurityyppiosio](https://graphql.github.io/graphql-spec/draft/#sec-Root-Operation-Types)
 
-#### Query-tyyppi
+<a id='221'></a>
+#### 2.2.1 Query-tyyppi
 
 Query-tyypin sisälle on määriteltävä tietoa palauttavat kyselyt.
