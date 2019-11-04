@@ -35,15 +35,18 @@ type Henkilo {
     nimi: String!
     ika: Int
     viestit: [Viesti]
+    viestitKayttajalta(_id: ID!): [Viesti]
 }
 
 type Viesti {
-    lahettaja: Henkilo!
+    _id: ID!
+    lahettaja: ID!
+    lahettajanNimi: String
     sisalto: String
 }
 ```
 
-`Henkilo` ja `Viesti` ovat tässä tapauksessa GraphQL-objektityyppejä. Niiden sisällä on kenttiä, jotka määrittävät sen, mitä ja millaista tietoa niistä on mahdollista kysellä. `Viesti`-objekti sisältää kaksi kenttää: `lahettaja`, joka palauttaa `Henkilo`-tyypin mukaista dataa, ja `sisalto`, joka palauttaa `String`-tyypin mukaista dataa. `lahettaja`-kentän tyypin perään on laitettu huutomerkki. `!` merkitsee sitä, että kyseinen kenttä ei voi olla `null`. GraphQL-palvelu lupaa siis antaa sille aina jonkin arvon. `Henkilo`-objektin `viestit`-kentän tyyppi on taasen laitettu hakasulkeisiin: se tarkoittaa sitä, että `viestit`-kenttään asetetaan `Viesti`-objekteja sisältävä taulukko.
+`Henkilo` ja `Viesti` ovat tässä tapauksessa GraphQL-objektityyppejä. Niiden sisällä on kenttiä, jotka määrittävät sen, mitä ja millaista tietoa niistä on mahdollista kysellä. `Viesti`-objekti sisältää neljä kenttää: `_id`, joka palauttaa viestin yksilöllisen ID:n (tässä tapauksessa MongoDB:n ObjectID:n); `lahettaja`, joka palauttaa `Henkilo`-tyypin mukaista dataa; `lahettajanNimi`, joka palauttaa merkkijonon; ja `sisalto`, joka palauttaa `String`-tyypin mukaista dataa. `_id`- ja `lahettaja`-kenttien tyyppien perään on laitettu huutomerkki. `!` merkitsee sitä, että kyseinen kenttä ei voi olla `null`. GraphQL-palvelu lupaa siis antaa sille aina jonkin arvon. `Henkilo`-objektin `viestit`-kentän tyyppi on taasen laitettu hakasulkeisiin: se tarkoittaa sitä, että `viestit`-kenttään asetetaan `Viesti`-objekteja sisältävä taulukko.
 
 `String` on yksi GraphQL:n valmiista nk. skalaarityypeistä. `String` palauttaa UTF-8-merkkijonon. Muita valmiita tyyppejä ja niiden palautuksia ovat:
 - `Int`: 32-bittinen etumerkillinen kokonaisluku
@@ -76,9 +79,82 @@ type Query {
 <a id='222'></a>
 #### 2.2.2 Mutation-tyyppi
 
-// TODO
+Mutation-tyypin sisälle on määriteltävä tietoa muokkaavat kyselyt. Jos haluaisimme määritellä kyselyn, joka lisää tietokantaan tietyn ikäisen ja nimisen henkilön, voisimme määritellä sen skeeman sisälle näin:
+
+```
+type Mutation {
+    lisaaHenkilo(nimi: String!, ika: Int!): Henkilo
+}
+```
+
+`lisaaHenkilo`-kysely ottaa vastaan parametrit nimi ja ika, jotka ovat tyypiltään String ja Int.
 
 <a id='3'></a>
 ## 3 Resolver
 
-// TODO
+Resolver vastaa skeemassa määriteltyjen kyselyiden toteutuksesta. Sen toteutus määrää sen, mitä palautetaan. Monet GraphQL-kirjastot eivät vaadi kaikkien kenttien palautuksen määrittelemistä erikseen: ne olettavat, että mikäli jollekin kentälle ei ole luotu toteutusta resolveriin, tulee haetusta oliosta etsiä ja palauttaa ominaisuus, jonka nimi vastaa kentän nimeä.
+
+Apollo Serverillä rakennetussa GraphQL-rajapinnassa resolver on funktiokokoelma, jota kutsutaan resolver mapiksi. Tällainen resolver voisi näyttää tältä:
+
+```
+const resolvers = {
+    // Query-juurityypin alla olevien kyselyiden toteutus
+    Query: {
+        henkilo(root, args) {
+            return HenkiloModel.findById(args._id);
+        },
+        henkilot() {
+            return HenkiloModel.find().sort({ _id: '-1' });
+        },
+        viesti(root, args) {
+            return ViestiModel.findById(args._id);
+        }
+    },
+
+    // Henkilo-objektin kenttien palautuksien toteutus
+    Henkilo: {
+        viestit(henkilo) {
+            return henkilo.viestit;
+        },
+
+        viestitKayttajalta(root, args) {
+            let resultArray = [];
+            root.viestit.forEach(viesti => viesti.lahettaja === args._id ? resultArray.push(viesti) : null);
+            return resultArray;
+        }
+    },
+
+    // Viesti-objektin kenttien palautuksien toteutus
+    Viesti: {
+        async lahettajanNimi(viesti) {
+            let henkilo = await HenkiloModel.findById(viesti.lahettaja);
+            return henkilo.nimi;
+        }
+    },
+
+    // Mutaatioiden toteutus
+    Mutation: {
+        async lisaaHenkilo(root, args) {
+            return await HenkiloModel.create(args);
+        },
+        async lisaaViesti(root, args) {
+            let henkilo = await HenkiloModel.findById(args.vastaanottaja);
+            let viesti = new ViestiModel({ lahettaja: args.lahettaja, sisalto: args.sisalto });
+            henkilo.viestit.push(viesti);
+            let result = await henkilo.save();
+            return result.viestit[result.viestit.length - 1];
+        }
+    }
+    
+}
+```
+
+Tässä resolverissa on toteutettu kyselyitä, joiden määritelmiä en esitellyt aiemmin, joten älä huolestu, jos et tunnista esim. `Query.viesti`-metodia. 
+
+Resolver-funktio ottaa vastaan neljä parametriä: `parent` (yllä olevassa resolverissa käytetty sanaa `root`), `args`, `context` ja `info`. Näistä `parent` ja `args` ovat meille hyödyllisimmät tällä hetkellä. `parent` on objekti, joka sisältää ylemmän tason resolverin palauttaman tuloksen. `Query`-tasolla se on palvelimen palauttama `rootValue`, mutta esim. `Henkilo.viestit(henkilo)`-metodissa parametri `henkilo` on juurikin `Query.henkilo`-metodin palauttama Henkilo-olio. `args` taasen on nimensä mukaisesti GraphQL-kyselylle annetut argumentit.
+
+`HenkiloModel` ja `ViestiModel` ovat tässä tapauksessa Mongoose-malleja, joilla haetaan dataa. Huomaa, että Viesti-objektille on toteutettu lahettajanNimi-query, mikä etsii tiettyä Henkilöä tietokannasta ID:n perusteella ja palauttaa tämän nimen. Viesti-objektin skeemassa ei ole määritelmää lähettäjän nimelle, mutta tälle kyselylle on määritelmä. Näin voidaan toteuttaa relaatiota.
+
+\- [GraphQL:n opetusmateriaalia kyselyiden toteuttamisesta](https://graphql.org/learn/execution/)
+
+\- [Apollo Serverin resolverin dokumentaatiota](https://www.apollographql.com/docs/apollo-server/data/data/)
