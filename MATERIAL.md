@@ -7,6 +7,7 @@
 ### [> > 2.2.1 Query-tyyppi](#221)
 ### [> > 2.2.2 Mutation-tyyppi](#222)
 ## [3 Resolver](#3)
+## [4 Kyselyt](#4)
 
 <a id='1'></a>
 ## 1 Mikä ihmeen GraphQL?
@@ -158,3 +159,10 @@ Resolver-funktio ottaa vastaan neljä parametriä: `parent` (yllä olevassa reso
 \- [GraphQL:n opetusmateriaalia kyselyiden toteuttamisesta](https://graphql.org/learn/execution/)
 
 \- [Apollo Serverin resolverin dokumentaatiota](https://www.apollographql.com/docs/apollo-server/data/data/)
+
+<a id='4'></a>
+## 4 Kyselyt
+
+Minkälainen kysely GraphQL-rajapinnalle sitten pitää lähettää, jotta jotain palautuu?
+
+// TODO
