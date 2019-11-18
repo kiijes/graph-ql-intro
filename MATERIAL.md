@@ -3,7 +3,7 @@
 ## [1 Mikä ihmeen GraphQL?](#1)
 ## [2 GraphQL-skeema](#2)
 ### [> 2.1 Skeeman kielioppi](#21)
-### [> 2.2 Juuripoeraatiotyypit](#22)
+### [> 2.2 Juurioperaatiotyypit](#22)
 ### [> > 2.2.1 Query-tyyppi](#221)
 ### [> > 2.2.2 Mutation-tyyppi](#222)
 ## [3 Resolver](#3)
@@ -90,6 +90,12 @@ type Mutation {
 
 `lisaaHenkilo`-kysely ottaa vastaan parametrit nimi ja ika, jotka ovat tyypiltään String ja Int.
 
+Voisimme määrittää Mutation-tyypin sisälle vielä kutsun lisaaViesti, jolla voisimme lisätä tietokantaan viestin, jolla on lähettäjä, vastaanottaja ja sisältö:
+
+```
+lisaaViesti(lahettaja: String!, vastaanottaja: String!, sisalto: String): Viesti
+```
+
 <a id='3'></a>
 ## 3 Resolver
 
@@ -163,6 +169,21 @@ Resolver-funktio ottaa vastaan neljä parametriä: `parent` (yllä olevassa reso
 <a id='4'></a>
 ## 4 Kyselyt
 
-Minkälainen kysely GraphQL-rajapinnalle sitten pitää lähettää, jotta jotain palautuu?
+Minkälainen kysely GraphQL-rajapinnalle sitten pitää lähettää, jotta jotain palautuu? Kyselyoperaatioille on hyvä tapa ensin antaa tyyppi ja nimi ennen varsinaisten kyselyiden kutsumista. Se mahdollistaa myös esim. vaihtelevien muuttujien käytön kutsuissa.
 
-// TODO
+Mutation-kutsu lisaaViesti-kyselylle voisi näyttää tältä:
+
+```
+mutation sendMessage($sender: String!, $recipient: String!, $msg: String) {
+    lisaaViesti(lahettaja: $sender, vastaanottaja: $recipient, sisalto: $msg) {
+        lahettaja
+        sisalto
+    }
+}
+```
+
+`mutation sendMessage(...)` määrittää kutsullemme operaation tyypin, nimen ja muuttujat. Muuttujien nimet alkavat $-merkillä, ja niille on annettu tyypit, jotka kutsun määritelmässä on määritelty. **Näiden on täsmättävä**, tai muuten kutsu epäonnistuu.
+
+Operaation esittelyn jälkeen tulee itse kutsu `lisaaViesti(...)`, johon on annettu parametreille lahettaja, vastaanottaja ja sisalto argumentit $sender, $recipient ja $msg. Huomaa, että parametrien nimet täsmäävät niiden kanssa, jotka määriteltiin skeemaan Mutation-tyypin sisällä olevaan kutsuun lisaaViesti. Argumentit taasen ovat nimeltään samat, kuin `sendMessage(...)`-operaatioon määriteltiin.
+
+`lisaaViesti(...)`-kutsun sisälle on kirjoitettu `lahettaja` ja `sisalto`. Jos katsomme Viesti-objektityyppiä, huomaamme, että sieltä löytyvät nämä attribuutit. Huomaamme myös `lisaaViesti`-mutaation määrittelystä, että se palauttaa Viesti-tyypin objektin. Voimme siis ottaa kutsusta vastaan viestin, jonka olemme juuri lisänneet tietokantaan.
