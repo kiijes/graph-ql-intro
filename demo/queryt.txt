@@ -1,0 +1,34 @@
+mutation lisaaHenkilo {
+  lisaaHenkilo(nimi: "Jesse K", ika: 23) {
+    _id
+    nimi
+    ika
+  }
+}
+
+mutation lisaaViesti($viesti: String) {
+  lisaaViesti(lahettaja: "5db1ee32a7f10323bcafe994", vastaanottaja: "5db1ee32a7f10323bcafe994", sisalto: $viesti) {
+    lahettaja
+    sisalto
+  }
+}
+
+query haeJessenViestitKayttajalta {
+  henkilo(_id: "5db1ee32a7f10323bcafe994") {
+    nimi
+    ika
+    viestitKayttajalta(_id: "5db1ee32a7f10323bcafe994") {
+      sisalto
+      lahettaja
+    }
+  }
+}
+
+query haeJessenViestit {
+  henkilo(_id: "5db1ee32a7f10323bcafe994") {
+    viestit {
+      sisalto
+      lahettajanNimi
+    }
+  }
+}

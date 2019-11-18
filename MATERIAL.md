@@ -8,6 +8,7 @@
 ### [> > 2.2.2 Mutation-tyyppi](#222)
 ## [3 Resolver](#3)
 ## [4 Kyselyt](#4)
+## [5 Tehtävät](#4)
 
 <a id='1'></a>
 ## 1 Mikä ihmeen GraphQL?
@@ -184,6 +185,30 @@ mutation sendMessage($sender: String!, $recipient: String!, $msg: String) {
 
 `mutation sendMessage(...)` määrittää kutsullemme operaation tyypin, nimen ja muuttujat. Muuttujien nimet alkavat $-merkillä, ja niille on annettu tyypit, jotka kutsun määritelmässä on määritelty. **Näiden on täsmättävä**, tai muuten kutsu epäonnistuu.
 
-Operaation esittelyn jälkeen tulee itse kutsu `lisaaViesti(...)`, johon on annettu parametreille lahettaja, vastaanottaja ja sisalto argumentit $sender, $recipient ja $msg. Huomaa, että parametrien nimet täsmäävät niiden kanssa, jotka määriteltiin skeemaan Mutation-tyypin sisällä olevaan kutsuun lisaaViesti. Argumentit taasen ovat nimeltään samat, kuin `sendMessage(...)`-operaatioon määriteltiin.
+Operaation esittelyn jälkeen tulee itse kutsu `lisaaViesti(...)`, johon on annettu parametreille `lahettaja`, `vastaanottaja` ja `sisalto` argumentit `$sender`, `$recipient` ja `$msg`. Huomaa, että parametrien nimet täsmäävät niiden kanssa, jotka määriteltiin skeemaan Mutation-tyypin sisällä olevaan kutsuun lisaaViesti. Lisäksi, jos katsomme lisaaViesti-kyselyn toteutusta resolverissa, näemme, että args-objekti sisältää nämä attribuutit. Argumentit taasen ovat nimeltään samat, kuin `sendMessage(...)`-operaatioon määriteltiin.
 
 `lisaaViesti(...)`-kutsun sisälle on kirjoitettu `lahettaja` ja `sisalto`. Jos katsomme Viesti-objektityyppiä, huomaamme, että sieltä löytyvät nämä attribuutit. Huomaamme myös `lisaaViesti`-mutaation määrittelystä, että se palauttaa Viesti-tyypin objektin. Voimme siis ottaa kutsusta vastaan viestin, jonka olemme juuri lisänneet tietokantaan.
+
+\- [GraphQL-queryjen perusteita](https://graphql.org/learn/queries/)
+
+\- [Apollo Clientin ohjeet queryjen tekemiseen Angularissa](https://www.apollographql.com/docs/angular/basics/queries/)
+
+<a id='5'></a>
+## 5 Tehtävät
+
+Tehtävien tekeminen vaatii:
+- Node.js + npm
+- MongoDB
+- Angular, Apollo, Express jne. (nämä asennetaan npm:n avulla)
+
+Ohjeet tehtävien tekemiseen:
+
+1. Kloonaa tai lataa tämä repositorio.
+2. Asenna Node.js + npm. Asenna myös MongoDB, jos haluat, että tietokanta on koneellasi lokaalisti.
+
+   **HUOM!** Jos käytät jotakin ulkoista palvelua MongoDB:tä varten (esim. mLab), sinun täytyy muokata `index.js`-tiedostossa Mongoose.connectin käyttämää URLia vastaamaan omaa tietokantaosoitettasi.
+   
+3. Aja komento `npm install` projektin [`demo`](./demo)- ja [`demo/ang-front`](./demo/ang-front)-kansioissa  riippuvaisuuksien asentamiseksi.
+4. Käynnistä MongoDB-tietokanta.
+5. Käynnistä backend ajamalla `node index.js` -komento [`demo`](./demo)-kansiossa.
+6. Käynnistä frontend ajamalla `ng serve -o` -komento [`demo/ang-front`](./demo/ang-front)-kansiossa.

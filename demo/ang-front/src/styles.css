@@ -1,0 +1,13 @@
+.card {
+    margin-top: 1em;
+    background-color: #ddc3ac;
+    padding: 1em;
+}
+
+p {
+    line-height: 0.5em;
+}
+
+body {
+    margin-top: 1em;
+}

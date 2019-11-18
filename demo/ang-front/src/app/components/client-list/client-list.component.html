@@ -1,0 +1,65 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="card col">
+                    <h2>Add a new client</h2>
+                    <form #addClient="ngForm" (ngSubmit)="clientFormSubmit(addClient.value)">
+                        <div class="form-group">
+                            <label for="nimi">Name</label>
+                            <input type="text" class="form-control" name="nimi" id="nimi" placeholder="Enter name" ngModel>
+                        </div>
+                        <div class="form-group">
+                            <label for="ika">Age</label>
+                            <input type="text" class="form-control" name="ika" id="ika" placeholder="Enter age" ngModel>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </form>
+                </div>
+            </div>
+            <div class="row" *ngIf="clients">
+                <div class="card col" *ngIf="clients">
+                    <h2>Send a new message</h2>
+                    <form #sendMessage="ngForm" (ngSubmit)="messageFormSubmit(sendMessage.value)">
+                        <div class="form-group">
+                            <label for="from">From</label>
+                            <select class="form-control" name="from" id="from" ngModel required>
+                                <option *ngFor="let client of clients; let i = index" [value]="clients[i]._id">{{ clients[i].nimi }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="to">To</label>
+                            <select class="form-control" name="to" id="to" ngModel required>
+                                <option *ngFor="let client of clients; let i = index" [value]="clients[i]._id">{{ clients[i].nimi }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="msg">Message</label>
+                            <textarea class="form-control" name="msg" id="msg" placeholder="Enter message" ngModel required></textarea>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="container" *ngIf="clients">
+                <div class="card row" *ngFor="let client of clients">
+                    <p><strong>Client ID:</strong> {{ client._id }}</p>
+                    <p><strong>Client name:</strong> {{ client.nimi }}</p>
+                    <p><strong>Client age:</strong> {{ client.ika }}</p>
+                    <p *ngIf="client.viestit.length > 0"><strong>Client messages:</strong></p>
+                    <p *ngIf="client.viestit.length === 0"><strong>No messages for this client.</strong></p>
+                    <ul *ngFor="let msg of client.viestit">
+                        <li><strong>Sender ID:</strong> {{ msg.lahettaja }}</li>
+                        <li><strong>Sender name:</strong> {{ msg.lahettajanNimi }}</li>
+                        <li><strong>Message:</strong> {{ msg.sisalto }}</li>
+                        <li><strong>Message ID:</strong> {{ msg._id }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
