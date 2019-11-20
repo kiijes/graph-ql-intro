@@ -193,6 +193,8 @@ Operaation esittelyn jälkeen tulee itse kutsu `lisaaViesti(...)`, johon on anne
 
 \- [Apollo Clientin ohjeet queryjen tekemiseen Angularissa](https://www.apollographql.com/docs/angular/basics/queries/)
 
+***
+
 <a id='5'></a>
 ## 5 Tehtävät
 
@@ -212,3 +214,11 @@ Ohjeet tehtävien tekemiseen:
 4. Käynnistä MongoDB-tietokanta.
 5. Käynnistä backend ajamalla `node index.js` -komento [`demo`](./demo)-kansiossa.
 6. Käynnistä frontend ajamalla `ng serve -o` -komento [`demo/ang-front`](./demo/ang-front)-kansiossa.
+
+***
+
+### **Tehtävä 1.**
+
+Muokkaa demosovellusta siten, että viestin tiedoissa on myös aikaleima. Muokkaa siis Viestin Mongoose-skeemaa siten, että viestiin tallennetaan aikaleima, ja GraphQL-skeemaa siten, että aikaleima palautuu. Lisäksi muokkaa GraphQL:n palautusta siten, että GraphQL palauttaa aikaleiman sovellukselle muotoiltuna merkkijonona, muodossa "PP.KK.VV klo TT:MM" (esim. 25.11.2019 klo 14:00). **Vinkki:** resolver. Muista muokata myös Angular-fronttia siten, että aikaleima haetaan ja näytetään sovelluksessa.
+
+Lopputulos voisi näyttää [tältä.](./img/example.png)
